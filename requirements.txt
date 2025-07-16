@@ -8,3 +8,4 @@ jupyter
 jupyterlab
 pyarrow
 openpyxl
+pyspark==4.0.0

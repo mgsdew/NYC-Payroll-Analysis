@@ -1,16 +1,12 @@
-version: '3.9'
-
 services:
-  jupyter-traffic:
+  jupyter-payroll:
     build: .
     container_name: payroll_analysis
     ports:
       - "8888:8888"
     volumes:
-      - .:/app
-      - "C:/Users/DEW/OneDrive - Unitec NZ/AI Coding/PySpark:/app/data"
-
-    env_file:
-      - .env
+      - ./app:/app
+      # For Windows paths, use proper formatting:
+      # - /c/Users/DEW/OneDrive - Unitec NZ/AI Coding/PySpark:/app/data
     working_dir: /app
     command: jupyter notebook --ip=0.0.0.0 --port=8888 --allow-root --no-browser

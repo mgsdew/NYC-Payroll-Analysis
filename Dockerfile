@@ -1,12 +1,23 @@
-FROM python:3.10-slim
+FROM python:3.11
 
+# Install dependencies
+RUN apt-get update && \
+    apt-get install -y gnupg2 curl software-properties-common && \
+    apt-get install -y openjdk-11-jdk && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Set environment variable so PySpark knows where Java is
+ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
+ENV PATH=$JAVA_HOME/bin:$PATH
+
+# Rest of your setup
 WORKDIR /app
-
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
-
-# Install Jupyter and extensions
-RUN pip install notebook jupyterlab jupyter_contrib_nbextensions
+  
+# Optional: install Jupyter extras if not already in requirements.txt
+RUN pip install notebook jupyterlab
 
 COPY . .
 
