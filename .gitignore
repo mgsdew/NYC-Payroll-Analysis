@@ -38,6 +38,3 @@ desktop.ini
 # Notebook outputs (optional, to keep things clean)
 *.out
 *.ipynb~
-
-# Project-specific
-data/
