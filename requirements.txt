@@ -8,4 +8,10 @@ jupyter
 jupyterlab
 pyarrow
 openpyxl
-pyspark==4.0.0
+pyspark==3.5.0
+requests
+sqlalchemy
+psycopg2-binary
+plotly>=5.0.0
+kaleido
+ipywidgets

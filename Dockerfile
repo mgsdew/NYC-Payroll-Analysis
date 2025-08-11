@@ -1,24 +1,28 @@
-FROM python:3.11
+FROM jupyter/all-spark-notebook:latest
 
-# Install dependencies
+# Switch to root for installations
+USER root
+
+# Update and install additional system dependencies if needed
 RUN apt-get update && \
-    apt-get install -y gnupg2 curl software-properties-common && \
-    apt-get install -y openjdk-11-jdk && \
+    apt-get install -y wget curl && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Set environment variable so PySpark knows where Java is
-ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
-ENV PATH=$JAVA_HOME/bin:$PATH
+# Switch back to jovyan user
+USER ${NB_UID}
 
-# Rest of your setup
-WORKDIR /app
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-  
-# Optional: install Jupyter extras if not already in requirements.txt
-RUN pip install notebook jupyterlab
+# Copy requirements and install Python dependencies in stages
+COPY requirements.txt /tmp/requirements.txt
 
-COPY . .
+# Install dependencies in stages to handle potential conflicts
+# First install PyTorch with CPU-only version to avoid CUDA issues
+RUN pip install --no-cache-dir torch torchvision --index-url https://download.pytorch.org/whl/cpu
 
-CMD ["jupyter", "notebook", "--ip=0.0.0.0", "--port=8888", "--allow-root", "--no-browser"]
+# Then install remaining requirements
+RUN pip install --no-cache-dir -r /tmp/requirements.txt
+
+# Copy app files to the work directory
+COPY app/ /home/jovyan/work/
+
+EXPOSE 8888

@@ -1,12 +1,16 @@
 services:
-  jupyter-payroll:
-    build: .
-    container_name: payroll_analysis
+  payroll-analysis:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nyc_payroll_analysis
     ports:
       - "8888:8888"
     volumes:
-      - ./app:/app
-      # For Windows paths, use proper formatting:
-      # - /c/Users/DEW/OneDrive - Unitec NZ/AI Coding/PySpark:/app/data
-    working_dir: /app
-    command: jupyter notebook --ip=0.0.0.0 --port=8888 --allow-root --no-browser
+      - ./app:/home/jovyan/work
+      - ./app/data:/home/jovyan/work/data
+    environment:
+      - GRANT_SUDO=yes
+      - JUPYTER_ENABLE_LAB=yes
+    working_dir: /home/jovyan/work
+    command: ["start-notebook.sh", "--NotebookApp.token=''", "--NotebookApp.password=''"]
